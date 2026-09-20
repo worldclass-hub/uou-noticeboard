@@ -1,0 +1,630 @@
+/* ============================================================
+   JAZZMIN CUSTOM STYLES - COMPLETE FINAL VERSION
+   ============================================================ */
+
+/* ✅ Prevent body/html scroll on login */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+}
+
+body:not(.login-page) {
+    overflow: auto !important;
+}
+
+/* ============================================================
+   LOGIN PAGE - FIXED BACKGROUND (NO MOVEMENT)
+   ============================================================ */
+
+.login-page {
+    background-image: url('/static/img/wallbackground.JPG') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    animation: none !important;
+    transform: none !important;
+    overflow: hidden !important;
+}
+
+.login-page::before {
+    content: '' !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    animation: none !important;
+    transform: none !important;
+}
+
+/* ============================================================
+   LOGIN BOX - LOGO ON TOP WITH EXTRA SPACE
+   ============================================================ */
+
+.login-box {
+    position: relative !important;
+    z-index: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    padding-top: 150px !important;
+    padding-bottom: 40px !important;
+    will-change: auto !important;
+}
+
+/* ============================================================
+   LOGIN LOGO
+   ============================================================ */
+
+.login-logo {
+    text-align: center !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+}
+
+/* ✅ Keep only the image, hide everything else in login-logo */
+.login-logo > *:not(img) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* ✅ Show only the logo image */
+.login-logo img {
+    display: block !important;
+    max-width: 80px !important;
+    height: auto !important;
+    margin: 0 auto 8px auto !important;
+}
+
+/* ============================================================
+   LOGIN CARD - GLASS EFFECT
+   ============================================================ */
+
+.card-body.auth-card,
+.login-box .card {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    will-change: auto !important;
+    margin-top: 20px !important;
+    max-width: 420px !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+}
+
+/* ============================================================
+   🔥 "WELCOME TO PLENTYHELP" - ON DARK GLASS BACKGROUND 🔥
+   ============================================================ */
+
+/* ✅ Remove the pseudo-element that adds text OUTSIDE the card */
+.login-box .card:before {
+    content: none !important;
+    display: none !important;
+}
+
+/* ✅ "Welcome to PlentyHelp" INSIDE the card */
+.login-box .card .login-box-msg {
+    display: block !important;
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 20px 0 10px 0 !important;
+    letter-spacing: 0.5px !important;
+    font-family: 'Inter', 'Segoe UI', sans-serif !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+/* ✅ Card body */
+.login-box .card-body {
+    padding-top: 5px !important;
+    padding-bottom: 30px !important;
+    background: transparent !important;
+}
+
+/* ✅ Reduce spacing between form groups */
+.login-box .card .form-group {
+    margin-bottom: 15px !important;
+    position: relative !important;
+}
+
+/* ============================================================
+   🔥 SWEET COLORED ICONS FOR USERNAME & PASSWORD 🔥
+   ============================================================ */
+
+/* ✅ Style for the icons inside the input groups */
+.login-box .card .input-group-text,
+.login-box .card .input-group-prepend .input-group-text,
+.login-box .card .input-group-append .input-group-text {
+    background: transparent !important;
+    border: none !important;
+    padding: 10px 12px !important;
+    font-size: 18px !important;
+    color: #5eead4 !important;  /* Default teal color */
+}
+
+/* ✅ Username icon - Blue gradient */
+.login-box .card .fa-user,
+.login-box .card .fas.fa-user,
+.login-box .card .fa-user-circle,
+.login-box .card .fas.fa-user-circle {
+    color: #00B4DB !important;
+    font-size: 20px !important;
+    background: linear-gradient(135deg, #0083B0, #00B4DB) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* ✅ Password icon - Purple gradient */
+.login-box .card .fa-lock,
+.login-box .card .fas.fa-lock,
+.login-box .card .fa-key,
+.login-box .card .fas.fa-key {
+    color: #8B5CF6 !important;
+    font-size: 20px !important;
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* ✅ Email icon - Green gradient (if used) */
+.login-box .card .fa-envelope,
+.login-box .card .fas.fa-envelope {
+    color: #00A859 !important;
+    font-size: 20px !important;
+    background: linear-gradient(135deg, #00A859, #00C853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* ✅ Input group wrapper - make it look clean */
+.login-box .card .input-group {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+}
+
+/* ✅ Input group on focus */
+.login-box .card .input-group:focus-within {
+    border-color: #0f766e !important;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.3) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* ✅ Input fields inside input group */
+.login-box .card .input-group .form-control,
+.login-box .card .input-group input {
+    border: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+    padding: 10px 15px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+}
+
+/* ✅ Input field focus inside input group */
+.login-box .card .input-group .form-control:focus,
+.login-box .card .input-group input:focus {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+}
+
+/* ✅ Placeholder color */
+.login-box .card .input-group .form-control::placeholder,
+.login-box .card .input-group input::placeholder {
+    color: #999999 !important;
+    font-weight: 400 !important;
+}
+
+/* ============================================================
+   LABELS - WHITE ON DARK
+   ============================================================ */
+
+.login-box .card label {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    margin-bottom: 5px !important;
+}
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.login-box .card .btn-primary {
+    background: linear-gradient(135deg, #0f766e, #0d9488) !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    transform: none !important;
+    color: #ffffff !important;
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    margin-top: 5px !important;
+    width: 100% !important;
+}
+
+.login-box .card .btn-primary:hover {
+    background: linear-gradient(135deg, #064e3b, #0f766e) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 4px 15px rgba(15, 118, 110, 0.4) !important;
+}
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+.login-box .card a {
+    color: #5eead4 !important;
+}
+
+.login-box .card a:hover {
+    color: #99f6e4 !important;
+    text-decoration: underline !important;
+}
+
+/* ============================================================
+   HIDE UNWANTED ELEMENTS
+   ============================================================ */
+
+#background-video {
+    display: none !important;
+}
+
+.badge,
+.user-avatar,
+#user-tools .user-avatar {
+    display: none !important;
+}
+
+.login-box .form-text,
+.login-box .help-block,
+.login-box .helptext,
+.login-box .help-text,
+.login-box .text-muted,
+.login-box .form-control-feedback {
+    display: none !important;
+}
+
+/* ============================================================
+   LOGO SIZING
+   ============================================================ */
+
+.brand-image {
+    max-width: 70px !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+.brand-text {
+    font-size: 14px !important;
+}
+
+.brand-link img {
+    max-width: 70px !important;
+    height: auto !important;
+}
+
+img[src*="new_emilia_logo.png"] {
+    max-width: 70px !important;
+    height: auto !important;
+}
+
+/* ============================================================
+   NAVBAR STYLING
+   ============================================================ */
+
+.navbar-nav .nav-link {
+    font-size: 16px !important;
+    color: #064e3b !important;
+    padding: 8px 10px !important;
+    transition: background-color 0.3s ease, border 0.3s ease !important;
+    border-bottom: 2px solid transparent !important;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(6, 78, 59, 0.2) !important;
+    border-radius: 5px !important;
+    border-bottom: 2px solid currentColor !important;
+}
+
+.navbar-nav .nav-link i {
+    transition: transform 0.3s ease !important;
+}
+
+.navbar-nav .nav-link:hover i {
+    transform: scale(1.2) !important;
+}
+
+/* ============================================================
+   FLOATING HOME BUTTON
+   ============================================================ */
+
+.floating-home-btn {
+    position: fixed !important;
+    bottom: 25px !important;
+    right: 25px !important;
+    background: linear-gradient(135deg, #064e3b, #0f766e) !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    width: 56px !important;
+    height: 56px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    z-index: 9999 !important;
+    transition: transform 0.4s ease, background-color 0.3s ease, opacity 0.4s ease !important;
+    transform: none !important;
+}
+
+.floating-home-btn:hover {
+    background: linear-gradient(135deg, #0f766e, #0d9488) !important;
+    transform: scale(1.1) !important;
+}
+
+.floating-home-btn.hide {
+    transform: translateY(100px) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ============================================================
+   HIDE UI CUSTOMIZER
+   ============================================================ */
+
+.ui-builder-panel,
+.ui-builder-toggle,
+#ui-builder-panel,
+#ui-builder-toggle,
+[class*="ui-builder"],
+[class*="ui_builder"],
+button[class*="ui-builder"],
+a[class*="ui-builder"],
+.nav-link .fa-paint-brush,
+.nav-link .fa-sliders-h {
+    display: none !important;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .login-box {
+        padding-top: 250px !important;
+        padding-bottom: 20px !important;
+    }
+    
+    .login-box .card {
+        margin-top: 15px !important;
+        max-width: 90% !important;
+    }
+    
+    .login-logo img {
+        max-width: 60px !important;
+    }
+    
+    .brand-image {
+        max-width: 45px !important;
+    }
+    
+    .floating-home-btn {
+        width: 44px !important;
+        height: 44px !important;
+        bottom: 15px !important;
+        right: 15px !important;
+    }
+    
+    .floating-home-btn i {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding-top: 220px !important;
+        padding-bottom: 15px !important;
+    }
+    
+    .login-box .card {
+        margin-top: 10px !important;
+        max-width: 95% !important;
+    }
+    
+    .login-logo img {
+        max-width: 50px !important;
+    }
+    
+    .brand-image {
+        max-width: 35px !important;
+    }
+    
+    .floating-home-btn {
+        width: 38px !important;
+        height: 38px !important;
+        bottom: 10px !important;
+        right: 10px !important;
+    }
+    
+    .floating-home-btn i {
+        font-size: 14px !important;
+    }
+}
+
+/* ============================================================
+   NUCLEAR FIX: REMOVE DUPLICATE LOGO TEXT
+   ============================================================ */
+
+.login-logo {
+    font-size: 0 !important;
+    line-height: 0 !important;
+}
+
+.login-logo * {
+    font-size: 0 !important;
+    line-height: 0 !important;
+    color: transparent !important;
+}
+
+.login-logo img {
+    font-size: initial !important;
+    line-height: initial !important;
+    color: initial !important;
+    display: block !important;
+    max-width: 80px !important;
+    height: auto !important;
+    margin: 0 auto 8px auto !important;
+}
+
+.login-logo::before,
+.login-logo::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* ============================================================
+   ULTIMATE SAFEGUARD - INLINE STYLE OVERRIDE
+   ============================================================ */
+
+.login-page .card input[style*="color"],
+.login-box .card input[style*="color"],
+.card input[style*="color"] {
+    color: #000000 !important;
+}
+
+.login-page .form-group input,
+.login-box .form-group input,
+.card-body input {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+input[name="password"],
+input[type="password"],
+#id_password {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+input[name="username"],
+input[type="text"],
+#id_username {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+/* ============================================================
+   🔥 PASSWORD EYE TOGGLE BUTTON
+   ============================================================ */
+
+/* Space for the eye button on the right of the password input */
+.login-box .card .input-group.password-group .form-control,
+.login-box .card .input-group.password-group input[type="password"],
+.login-box .card .input-group.password-group input[type="text"] {
+    padding-right: 45px !important;
+}
+
+/* The eye toggle button */
+.password-toggle-btn {
+    position: absolute !important;
+    top: 50% !important;
+    right: 8px !important;
+    transform: translateY(-50%) !important;
+    width: 34px !important;
+    height: 34px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
+    z-index: 5 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+.password-toggle-btn:hover {
+    background: rgba(15, 118, 110, 0.12) !important;
+    color: #0f766e !important;
+}
+
+.password-toggle-btn:active {
+    transform: translateY(-50%) scale(0.9) !important;
+}
+
+.password-toggle-btn i {
+    font-size: 16px !important;
+    color: inherit !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+/* On mobile, keep it small but tappable */
+@media (max-width: 480px) {
+    .password-toggle-btn {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 14px !important;
+        right: 6px !important;
+    }
+    .password-toggle-btn i {
+        font-size: 14px !important;
+    }
+}
+
+/* ============================================================
+   🔥 HIDE JAZZMIN'S PASSWORD LOCK ICON
+   (keeps eye button clean — no overlapping icons)
+   ============================================================ */
+
+/* Hide the built-in lock icon inside the password input group */
+.login-box .card .input-group.password-group .input-group-append,
+.login-box .card .input-group.password-group .input-group-text,
+.login-box .card .input-group.password-group .input-group-append .input-group-text,
+.login-box .card .input-group.password-group .fas.fa-lock,
+.login-box .card .input-group.password-group .fa-lock {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}

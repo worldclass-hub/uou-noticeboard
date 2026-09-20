@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}UOU Notice Board{% endblock %}</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind config — add custom uou color -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            uou: {
+              DEFAULT: '#4f46e5',
+              dark: '#3730a3',
+              light: '#eef2ff'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-uou text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white text-uou rounded-full flex items-center justify-center font-bold">
+            UOU
+          </div>
+          <div>
+            <div class="font-bold text-lg leading-tight">Unique Open University</div>
+            <div class="text-xs text-indigo-200">Notice Board</div>
+          </div>
+        </a>
+
+        <div class="flex items-center gap-4">
+          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm">Home</a>
+
+          {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm">
+              Admin Panel
+            </a>
+          {% endif %}
+
+          {% if user.is_authenticated %}
+            <span class="text-sm text-indigo-200 hidden sm:inline">
+              Hi, {{ user.username }}
+            </span>
+            <form method="post" action="{% url 'logout' %}" class="inline">
+              {% csrf_token %}
+              <button class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100">
+                Logout
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}"
+               class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100">
+              Admin Login
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 mt-4 w-full">
+      {% for message in messages %}
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-3 rounded mb-2 flex items-center justify-between">
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main content — child templates go override this block -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+      © {% now "Y" %} Unique Open University — Departmental Notice Board
+    </div>
+  </footer>
+
+  <!-- Our custom JS -->
+  <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>
