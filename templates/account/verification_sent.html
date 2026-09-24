@@ -1,0 +1,40 @@
+{% extends 'notices/base.html' %}
+
+{% block title %}Verify Your Email · UOU Notice Board{% endblock %}
+
+{% block content %}
+
+<div class="max-w-md mx-auto px-4 py-16">
+  <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
+
+    <div class="text-5xl mb-4">📧</div>
+
+    <h1 class="text-2xl font-bold text-gray-900">Verify Your Email</h1>
+
+    <p class="text-gray-600 mt-3 text-sm leading-relaxed">
+      We don send verification link to your email address.
+      Follow the link to complete your signup.
+    </p>
+
+    <div class="mt-4 p-3 bg-indigo-50 border-l-4 border-uou rounded text-left text-xs text-gray-700">
+      💡 <strong>Tip:</strong> No see am for inbox? Check your spam folder.
+    </div>
+
+    <p class="text-xs text-gray-500 mt-4">
+      Email go take like 1–2 minutes to arrive.
+    </p>
+
+    <div class="mt-6 pt-6 border-t flex items-center justify-center gap-4 text-sm">
+      <a href="{% url 'account_login' %}" class="text-uou font-semibold hover:underline">
+        Back to Login
+      </a>
+      <span class="text-gray-300">•</span>
+      <a href="{% url 'account_signup' %}" class="text-uou font-semibold hover:underline">
+        Try Another Account
+      </a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

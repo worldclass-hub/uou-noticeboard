@@ -6,23 +6,55 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    # Django's built-in admin (for backup / advanced use)
+    # ============================================
+    # Password Reset (Django native — allauth bug workaround)
+    # ============================================
+    path('password-reset/',
+         auth_views.PasswordResetView.as_view(
+             template_name='account/password_reset_form.html',
+             email_template_name='account/password_reset_email.txt',
+             subject_template_name='account/password_reset_subject.txt',
+             success_url='/password-reset/done/',
+         ),
+         name='password_reset'),
+
+    path('password-reset/done/',
+         auth_views.PasswordResetDoneView.as_view(
+             template_name='account/password_reset_done.html',
+         ),
+         name='password_reset_done'),
+
+    path('password-reset/confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='account/password_reset_confirm.html',
+             success_url='/password-reset/complete/',
+         ),
+         name='password_reset_confirm'),
+
+    path('password-reset/complete/',
+         auth_views.PasswordResetCompleteView.as_view(
+             template_name='account/password_reset_complete.html',
+         ),
+         name='password_reset_complete'),
+
+    # ============================================
+    # Django built-in admin (backup / advanced)
+    # ============================================
     path('django-admin/', admin.site.urls),
 
-    # Our custom app URLs
-    path('', include('notices.urls')),
+    # ============================================
+    # django-allauth — handles login, signup, logout, Google OAuth, email verify
+    # ============================================
+    path('accounts/', include('allauth.urls')),
 
-    # Login / Logout (Django built-in auth views with our custom template)
-    path('login/', auth_views.LoginView.as_view(
-        template_name='notices/login.html'
-    ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # ============================================
+    # Our custom app (notice board)
+    # ============================================
+    path('', include('notices.urls')),
 ]
 
 
-# Serve media files (uploads) during development
+# Serve media + static files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-    # Also serve static files cleanly in dev
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

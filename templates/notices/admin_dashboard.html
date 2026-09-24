@@ -1,0 +1,109 @@
+{% extends 'notices/base.html' %}
+
+{% block title %}Admin Dashboard · UOU Notice Board{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+      <p class="text-sm text-gray-500 mt-1">Overview of notices, categories, and users</p>
+    </div>
+    <a href="{% url 'notice_create' %}"
+       class="bg-uou text-white px-4 py-2 rounded-lg font-semibold hover:bg-uou-dark whitespace-nowrap">
+      + New Notice
+    </a>
+  </div>
+
+  <!-- Stats grid -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+    <div class="bg-white rounded-xl p-5 border-l-4 border-uou shadow-sm">
+      <div class="text-sm text-gray-500">Total Notices</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">{{ total_notices }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border-l-4 border-green-500 shadow-sm">
+      <div class="text-sm text-gray-500">Active Notices</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">{{ active_notices }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border-l-4 border-red-500 shadow-sm">
+      <div class="text-sm text-gray-500">Expired Notices</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">{{ expired_notices }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border-l-4 border-purple-500 shadow-sm">
+      <div class="text-sm text-gray-500">Users</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">{{ users_count }}</div>
+    </div>
+
+  </div>
+
+  <!-- Quick actions -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+
+    <a href="{% url 'manage_notices' %}"
+       class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md border border-gray-100 transition">
+      <div class="text-2xl">📋</div>
+      <div class="font-bold text-gray-900 mt-2">Manage Notices</div>
+      <div class="text-sm text-gray-500">Create, edit, publish or delete notices</div>
+    </a>
+
+    <a href="{% url 'category_list' %}"
+       class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md border border-gray-100 transition">
+      <div class="text-2xl">🏷️</div>
+      <div class="font-bold text-gray-900 mt-2">Manage Categories</div>
+      <div class="text-sm text-gray-500">Organize your notices by topic</div>
+    </a>
+
+    <a href="{% url 'notice_create' %}"
+       class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md border border-gray-100 transition">
+      <div class="text-2xl">➕</div>
+      <div class="font-bold text-gray-900 mt-2">Add Notice</div>
+      <div class="text-sm text-gray-500">Publish a new announcement</div>
+    </a>
+
+  </div>
+
+  <!-- Recent notices -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-4 border-b flex items-center justify-between gap-3">
+      <h2 class="font-bold text-gray-900">Recent Notices</h2>
+      <a href="{% url 'manage_notices' %}"
+         class="text-uou text-sm font-semibold hover:underline whitespace-nowrap">
+        View all →
+      </a>
+    </div>
+
+    <div class="divide-y">
+      {% for n in recent_notices %}
+        <div class="p-4 flex items-center justify-between gap-3 flex-wrap">
+          <div class="min-w-0 flex-1">
+            <div class="font-semibold text-gray-800 truncate">{{ n.title }}</div>
+            <div class="text-xs text-gray-500 mt-0.5 truncate">
+              {{ n.published_at|date:"M d, Y" }} · {{ n.author.username }}
+            </div>
+          </div>
+          <div class="shrink-0">
+            {% if n.is_expired %}
+              <span class="px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 whitespace-nowrap">Expired</span>
+            {% elif n.status == 'published' %}
+              <span class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 whitespace-nowrap">Published</span>
+            {% else %}
+              <span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 whitespace-nowrap">Draft</span>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="p-8 text-center text-gray-500">No notices yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

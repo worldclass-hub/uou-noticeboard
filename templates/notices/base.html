@@ -6,10 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}UOU Notice Board{% endblock %}</title>
 
-  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Tailwind config — add custom uou color -->
   <script>
     tailwind.config = {
       theme: {
@@ -25,47 +23,59 @@
       }
     }
   </script>
+
+  <style>
+    /* Global safety: prevent any content from breaking the layout */
+    body {
+      overflow-x: hidden;
+    }
+    .break-words {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+  </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
   <!-- Navbar -->
   <nav class="bg-uou text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
+      <div class="flex justify-between h-16 items-center gap-3">
 
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-white text-uou rounded-full flex items-center justify-center font-bold">
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 bg-white text-uou rounded-full flex items-center justify-center font-bold shrink-0">
             UOU
           </div>
-          <div>
-            <div class="font-bold text-lg leading-tight">Unique Open University</div>
+          <div class="min-w-0">
+            <div class="font-bold text-sm sm:text-lg leading-tight truncate">Unique Open University</div>
             <div class="text-xs text-indigo-200">Notice Board</div>
           </div>
         </a>
 
-        <div class="flex items-center gap-4">
-          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm">Home</a>
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm hidden sm:inline">Home</a>
 
           {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm">
+            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm hidden sm:inline">
               Admin Panel
             </a>
           {% endif %}
 
           {% if user.is_authenticated %}
-            <span class="text-sm text-indigo-200 hidden sm:inline">
+            <span class="text-sm text-indigo-200 hidden md:inline truncate max-w-[100px]">
               Hi, {{ user.username }}
             </span>
-            <form method="post" action="{% url 'logout' %}" class="inline">
+            <form method="post" action="{% url 'account_logout' %}" class="inline">
               {% csrf_token %}
-              <button class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100">
+              <button class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
                 Logout
               </button>
             </form>
           {% else %}
-            <a href="{% url 'login' %}"
-               class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100">
-              Admin Login
+            <a href="{% url 'account_login' %}"
+               class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
+              Login
             </a>
           {% endif %}
         </div>
@@ -74,19 +84,19 @@
     </div>
   </nav>
 
-  <!-- Flash messages -->
+  <!-- Flash messages (mt-4 moved to each message so no gap when empty) -->
   {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 mt-4 w-full">
+    <div class="max-w-7xl mx-auto px-4 w-full">
       {% for message in messages %}
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-3 rounded mb-2 flex items-center justify-between">
-          <span>{{ message }}</span>
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-3 rounded mt-4 mb-2 break-words">
+          {{ message }}
         </div>
       {% endfor %}
     </div>
   {% endif %}
 
-  <!-- Main content — child templates go override this block -->
-  <main class="flex-1">
+  <!-- Main content -->
+  <main class="flex-1 w-full overflow-x-hidden">
     {% block content %}{% endblock %}
   </main>
 
@@ -97,7 +107,6 @@
     </div>
   </footer>
 
-  <!-- Our custom JS -->
   <script src="{% static 'js/main.js' %}"></script>
 
 </body>

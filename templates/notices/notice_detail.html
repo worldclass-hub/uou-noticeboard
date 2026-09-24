@@ -1,0 +1,95 @@
+{% extends 'notices/base.html' %}
+
+{% block title %}{{ notice.title }} · UOU Notice Board{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+
+  <!-- Back link -->
+  <a href="{% url 'dashboard' %}"
+     class="text-uou font-medium text-sm hover:underline inline-flex items-center gap-1">
+    ← Back to all notices
+  </a>
+
+  <!-- Notice card -->
+  <article class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8 md:p-10 mt-4 overflow-hidden min-w-0">
+
+    <!-- Important badge -->
+    {% if notice.is_important %}
+      <div class="inline-block bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full mb-3">
+        ⚠ Important Announcement
+      </div>
+    {% endif %}
+
+    <!-- Category badge -->
+    {% if notice.category %}
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                   bg-{{ notice.category.color }}-100 text-{{ notice.category.color }}-700">
+        {{ notice.category.name }}
+      </span>
+    {% endif %}
+
+    <!-- Title -->
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mt-3 leading-tight break-words">
+      {{ notice.title }}
+    </h1>
+
+    <!-- Meta row -->
+    <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-500 mt-4 pb-6 border-b">
+      <span class="break-words">
+        👤 <strong class="text-gray-700">
+          {{ notice.author.get_full_name|default:notice.author.username }}
+        </strong>
+      </span>
+      <span>📅 Published {{ notice.published_at|date:"F d, Y · H:i" }}</span>
+      {% if notice.expiry_date %}
+        <span class="{% if notice.is_expired %}text-red-600 font-semibold{% endif %}">
+          ⏳ {% if notice.is_expired %}Expired{% else %}Expires{% endif %}
+          {{ notice.expiry_date|date:"F d, Y" }}
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="mt-6 text-gray-800 leading-relaxed whitespace-pre-wrap break-words overflow-x-auto max-w-full">
+      {{ notice.content }}
+    </div>
+
+    <!-- Attachment -->
+    {% if notice.attachment %}
+      <div class="mt-8 p-4 bg-indigo-50 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="min-w-0 flex-1 max-w-full">
+          <div class="font-semibold text-gray-800">📎 Attachment</div>
+          <div class="text-sm text-gray-600 truncate">{{ notice.attachment.name }}</div>
+        </div>
+        <a href="{{ notice.attachment.url }}" download
+           class="bg-uou text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-uou-dark whitespace-nowrap shrink-0">
+          Download
+        </a>
+      </div>
+    {% endif %}
+
+  </article>
+
+  <!-- Related notices -->
+  {% if related_notices %}
+    <div class="mt-10">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Related Notices</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for r in related_notices %}
+          <a href="{% url 'notice_detail' r.pk %}"
+             class="block bg-white rounded-lg p-4 border border-gray-100 hover:shadow-md transition overflow-hidden min-w-0">
+            <h3 class="font-semibold text-gray-800 break-words">{{ r.title|truncatechars:60 }}</h3>
+            <div class="text-xs text-gray-500 mt-2">
+              {{ r.published_at|date:"M d, Y" }}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

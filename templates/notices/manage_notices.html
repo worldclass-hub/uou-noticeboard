@@ -1,0 +1,132 @@
+{% extends 'notices/base.html' %}
+
+{% block title %}Manage Notices · UOU Notice Board{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Header + filters -->
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Manage Notices</h1>
+      <p class="text-sm text-gray-500 mt-1">Create, edit, publish, or delete notices</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="?status="
+         class="px-3 py-1.5 rounded-lg text-sm font-semibold border
+                {% if not status_filter %}bg-uou text-white border-uou{% else %}bg-white text-gray-700 hover:border-uou{% endif %}">
+        All
+      </a>
+      <a href="?status=published"
+         class="px-3 py-1.5 rounded-lg text-sm font-semibold border
+                {% if status_filter == 'published' %}bg-uou text-white border-uou{% else %}bg-white text-gray-700 hover:border-uou{% endif %}">
+        Published
+      </a>
+      <a href="?status=draft"
+         class="px-3 py-1.5 rounded-lg text-sm font-semibold border
+                {% if status_filter == 'draft' %}bg-uou text-white border-uou{% else %}bg-white text-gray-700 hover:border-uou{% endif %}">
+        Draft
+      </a>
+
+      <a href="{% url 'notice_create' %}"
+         class="bg-uou text-white px-4 py-1.5 rounded-lg font-semibold hover:bg-uou-dark whitespace-nowrap">
+        + New Notice
+      </a>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="text-left p-3">Title</th>
+            <th class="text-left p-3 hidden md:table-cell">Category</th>
+            <th class="text-left p-3 hidden sm:table-cell">Date</th>
+            <th class="text-left p-3">Status</th>
+            <th class="text-right p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          {% for n in notices %}
+            <tr class="hover:bg-gray-50">
+              <td class="p-3 max-w-xs">
+                <a href="{% url 'notice_detail' n.pk %}"
+                   class="font-semibold text-gray-800 hover:text-uou break-words block">
+                  {{ n.title }}
+                </a>
+                {% if n.is_important %}
+                  <span class="text-red-500 ml-1" title="Important">⚠</span>
+                {% endif %}
+                {% if n.attachment %}
+                  <span class="text-gray-400 ml-1" title="Has attachment">📎</span>
+                {% endif %}
+              </td>
+
+              <td class="p-3 hidden md:table-cell">
+                {% if n.category %}
+                  <span class="px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap
+                               bg-{{ n.category.color }}-100 text-{{ n.category.color }}-700">
+                    {{ n.category.name }}
+                  </span>
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </td>
+
+              <td class="p-3 hidden sm:table-cell text-gray-500 whitespace-nowrap">
+                {{ n.published_at|date:"M d, Y" }}
+              </td>
+
+              <td class="p-3">
+                {% if n.is_expired %}
+                  <span class="px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 whitespace-nowrap">
+                    Expired
+                  </span>
+                {% elif n.status == 'published' %}
+                  <span class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 whitespace-nowrap">
+                    Published
+                  </span>
+                {% else %}
+                  <span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 whitespace-nowrap">
+                    Draft
+                  </span>
+                {% endif %}
+              </td>
+
+              <td class="p-3 text-right whitespace-nowrap">
+                <a href="{% url 'notice_edit' n.pk %}"
+                   class="text-uou hover:underline text-xs font-semibold mr-3">
+                  Edit
+                </a>
+                <a href="{% url 'notice_toggle_publish' n.pk %}"
+                   class="text-yellow-600 hover:underline text-xs font-semibold mr-3">
+                  {% if n.status == 'published' %}Unpublish{% else %}Publish{% endif %}
+                </a>
+                <a href="{% url 'notice_delete' n.pk %}"
+                   class="text-red-600 hover:underline text-xs font-semibold">
+                  Delete
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="p-12 text-center text-gray-500">
+                No notices found.
+                <a href="{% url 'notice_create' %}" class="text-uou font-semibold hover:underline ml-1">
+                  Create one →
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

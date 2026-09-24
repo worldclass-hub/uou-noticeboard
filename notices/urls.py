@@ -1,15 +1,3 @@
-# from django.urls import path
-# from . import views
-
-# app_name = 'plentyhelp'
-
-# urlpatterns = [
-#     path('', views.home, name='home'),
-# ]
-
-
-
-
 from django.urls import path
 from . import views
 
@@ -18,6 +6,9 @@ urlpatterns = [
     # ---------- STUDENT ----------
     path('', views.dashboard, name='dashboard'),
     path('notice/<int:pk>/', views.notice_detail, name='notice_detail'),
+
+    # ---------- API ----------
+    path('api/notices/search/', views.api_search_notices, name='api_search_notices'),
 
     # ---------- ADMIN ----------
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),

@@ -1,15 +1,10 @@
-# from django.shortcuts import render
-
-# def home(request):
-#     return render(request, 'notices/home.html')
-
-
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.utils.text import slugify
 from .models import Notice, Category
 from .forms import NoticeForm, CategoryForm
 
@@ -26,15 +21,23 @@ def dashboard(request):
     query = request.GET.get('q', '')
 
     notices = Notice.objects.filter(status='published')
-    # Hide expired from student view
     notices = [n for n in notices if not n.is_expired]
 
     if category_slug:
-        notices = [n for n in notices if n.category and n.category.slug == category_slug]
+        notices = [
+            n for n in notices
+            if n.category and (
+                n.category.slug == category_slug
+                or slugify(n.category.name) == category_slug
+            )
+        ]
 
     if query:
-        notices = [n for n in notices if query.lower() in n.title.lower()
-                   or query.lower() in n.content.lower()]
+        q_lower = query.lower()
+        notices = [
+            n for n in notices
+            if q_lower in n.title.lower() or q_lower in n.content.lower()
+        ]
 
     latest_notices = notices[:6]
     important_notices = [n for n in notices if n.is_important][:3]
@@ -60,6 +63,53 @@ def notice_detail(request, pk):
     return render(request, 'notices/notice_detail.html', {
         'notice': notice,
         'related_notices': related,
+    })
+
+
+# ---------- API ----------
+
+def api_search_notices(request):
+    """JSON endpoint for live search + category filtering."""
+    query = request.GET.get('q', '').strip()
+    category_slug = request.GET.get('category', '').strip()
+
+    notices = Notice.objects.filter(status='published')
+    notices = [n for n in notices if not n.is_expired]
+
+    # Category filter — match by slug OR by slugified name (fallback)
+    if category_slug:
+        notices = [
+            n for n in notices
+            if n.category and (
+                n.category.slug == category_slug
+                or slugify(n.category.name) == category_slug
+            )
+        ]
+
+    if query:
+        q_lower = query.lower()
+        notices = [
+            n for n in notices
+            if q_lower in n.title.lower() or q_lower in n.content.lower()
+        ]
+
+    data = []
+    for n in notices[:6]:
+        data.append({
+            'id': n.pk,
+            'title': n.title,
+            'content_snippet': n.content[:120] + ('...' if len(n.content) > 120 else ''),
+            'category': n.category.name if n.category else None,
+            'category_color': n.category.color if n.category else None,
+            'author': n.author.get_full_name() or n.author.username,
+            'published_at': n.published_at.strftime('%b %d, %Y'),
+            'is_important': n.is_important,
+            'url': n.get_absolute_url(),
+        })
+
+    return JsonResponse({
+        'count': len(notices),
+        'notices': data,
     })
 
 

@@ -1,19 +1,126 @@
 {% extends 'notices/base.html' %}
 
-{% block title %}Test · UOU Notice Board{% endblock %}
+{% block title %}Home · UOU Notice Board{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-12">
-  <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
-    <h1 class="text-3xl font-bold text-gray-900">Base Template Works! 🎉</h1>
-    <p class="text-gray-600 mt-3">
-      If you see this page styled with Tailwind, base.html dey work correct.
-    </p>
-    <div class="mt-6 flex justify-center gap-2">
-      <span class="px-3 py-1 rounded-full bg-uou text-white text-sm">uou color</span>
-      <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">blue pill</span>
-      <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">green pill</span>
+
+<!-- Hero + Search -->
+<div class="bg-gradient-to-r from-uou to-indigo-700 text-white">
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold break-words">{{ department_name }}</h1>
+    <p class="text-indigo-100 mt-1">Official notice board — stay informed</p>
+
+    <div class="mt-6 flex flex-col sm:flex-row gap-2 max-w-2xl">
+      <div class="relative flex-1 min-w-0">
+        <input type="text" id="live-search-input" name="q" value="{{ query }}"
+               autocomplete="off"
+               placeholder="Search notices... (starts typing)"
+               class="w-full px-4 py-3 pr-10 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white">
+
+        <button type="button" id="clear-search"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 hidden">
+          ✕
+        </button>
+      </div>
+      <button type="button" id="search-btn"
+              class="bg-white text-uou px-6 py-3 rounded-lg font-semibold hover:bg-indigo-100 whitespace-nowrap">
+        Search
+      </button>
     </div>
   </div>
 </div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Categories -->
+  <div class="mb-8">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Categories</h2>
+    <div class="flex flex-wrap gap-2" id="category-pills">
+      <a href="{% url 'dashboard' %}"
+         data-category=""
+         class="category-pill px-4 py-1.5 rounded-full text-sm font-medium border
+                {% if not current_category %}bg-uou text-white border-uou{% else %}bg-white text-gray-700 border-gray-300 hover:border-uou{% endif %}">
+        All
+      </a>
+      {% for cat in categories %}
+        <a href="{% url 'dashboard' %}?category={{ cat.slug }}"
+           data-category="{{ cat.slug }}"
+           class="category-pill px-4 py-1.5 rounded-full text-sm font-medium border
+                  {% if current_category == cat.slug %}bg-uou text-white border-uou{% else %}bg-white text-gray-700 border-gray-300 hover:border-uou{% endif %}">
+          {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Important announcements -->
+  {% if important_notices %}
+  <div class="mb-10" id="important-section">
+    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <span class="w-2 h-6 bg-red-500 rounded"></span> Important Announcements
+    </h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for n in important_notices %}
+        <a href="{% url 'notice_detail' n.pk %}"
+           class="block bg-red-50 border-l-4 border-red-500 rounded-lg p-5 hover:shadow-lg transition overflow-hidden min-w-0">
+          <div class="text-xs font-semibold text-red-600 uppercase">Pinned</div>
+          <h3 class="font-bold text-gray-900 mt-1 break-words">{{ n.title }}</h3>
+          <p class="text-sm text-gray-600 mt-2 break-words overflow-hidden">{{ n.content|truncatewords:20 }}</p>
+          <div class="text-xs text-gray-500 mt-3">{{ n.published_at|date:"M d, Y" }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Latest notices -->
+  <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+      <span class="w-2 h-6 bg-uou rounded"></span>
+      <span id="notices-heading">Latest Notices</span>
+    </h2>
+    <span class="text-sm text-gray-500" id="notices-count">{{ total_count }} notice{{ total_count|pluralize }}</span>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="search-loading" class="hidden text-center py-6 text-gray-400 text-sm">
+    Searching...
+  </div>
+
+  <!-- Notices grid (JS go replace am) -->
+  <div id="notices-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for n in latest_notices %}
+      <a href="{% url 'notice_detail' n.pk %}"
+         class="notice-card bg-white rounded-xl shadow-sm hover:shadow-xl transition p-5 border border-gray-100 flex flex-col overflow-hidden min-w-0">
+        {% if n.category %}
+          <span class="self-start px-2.5 py-1 rounded-full text-xs font-semibold
+                       bg-{{ n.category.color }}-100 text-{{ n.category.color }}-700">
+            {{ n.category.name }}
+          </span>
+        {% endif %}
+        <h3 class="font-bold text-gray-900 mt-3 text-lg break-words">{{ n.title }}</h3>
+        <p class="text-gray-600 text-sm mt-2 flex-1 break-words overflow-hidden">
+          {{ n.content|truncatewords:25 }}
+        </p>
+        <div class="flex items-center justify-between text-xs text-gray-500 mt-4 pt-3 border-t gap-2 flex-wrap">
+          <span class="truncate max-w-[50%]">{{ n.author.username }}</span>
+          <span class="whitespace-nowrap">{{ n.published_at|date:"M d, Y" }}</span>
+        </div>
+      </a>
+    {% empty %}
+      <div class="md:col-span-2 lg:col-span-3 bg-white rounded-xl p-12 text-center border border-dashed" id="empty-initial">
+        <p class="text-gray-500">No notices found.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Empty state (JS shows when no results) -->
+  <div id="no-results" class="hidden bg-white rounded-xl p-12 text-center border border-dashed">
+    <div class="text-4xl mb-3">🔍</div>
+    <p class="text-gray-600 font-semibold">No notices match your search.</p>
+    <p class="text-sm text-gray-500 mt-1">Try different keywords or clear the search bar.</p>
+  </div>
+
+</div>
+
 {% endblock %}
