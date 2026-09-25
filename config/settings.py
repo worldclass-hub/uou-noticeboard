@@ -15,6 +15,7 @@ load_dotenv()
 # Optional — keep Jazzmin if you want it
 # from .jazzmin import JAZZMIN_SETTINGS
 
+
 # ============================================
 # PATHS
 # ============================================
@@ -28,14 +29,20 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 # ============================================
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-only-change-me')
 
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost,uou-noticeboard.onrender.com',
+    cast=Csv()
+)
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'https://uou-noticeboard.onrender.com',
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://127.0.0.1:8000,https://uou-noticeboard.onrender.com',
+    cast=Csv()
+)
+
 
 # ============================================
 # APPLICATIONS
@@ -65,6 +72,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'nested_admin',
+    'anymail',
 ]
 
 SITE_ID = 1
@@ -76,7 +84,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ============================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # ← ADD THIS LINE
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,6 +93,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
+
 ROOT_URLCONF = 'config.urls'
 
 
@@ -175,15 +184,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # ============================================
-# EMAIL — Gmail SMTP (Django 5.2)
+# EMAIL — Resend via Anymail
 # ============================================
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'samuelemenike4321@gmail.com'
-EMAIL_HOST_PASSWORD = 'gmutdjtyaebzlgsp'
-DEFAULT_FROM_EMAIL = 'UOU Notice Board <samuelemenike4321@gmail.com>'
+EMAIL_BACKEND = 'anymail.backends.resend.EmailBackend'
+ANYMAIL = {
+    'RESEND_API_KEY': config('RESEND_API_KEY', default=''),
+}
+DEFAULT_FROM_EMAIL = 'UOU Notice Board <onboarding@resend.dev>'
 
 
 # ============================================
@@ -194,10 +201,10 @@ LOGIN_REDIRECT_URL = 'dashboard'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'dashboard'
 
 # allauth 64.x uses these classic names
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'   # login with username OR email
-ACCOUNT_EMAIL_REQUIRED = True                      # email required at signup
-ACCOUNT_USERNAME_REQUIRED = True                   # username required at signup
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'           # must verify email
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 # Redirect unverified users after signup
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'account_email_verification_sent'

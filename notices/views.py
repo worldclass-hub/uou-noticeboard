@@ -261,21 +261,3 @@ def category_delete(request, pk):
         messages.success(request, 'Category deleted.')
         return redirect('category_list')
     return render(request, 'notices/category_confirm_delete.html', {'category': category})
-
-
-
-
-
-    from django.http import JsonResponse
-
-def debug_info(request):
-    from django.conf import settings
-    return JsonResponse({
-        'debug': settings.DEBUG,
-        'allowed_hosts': settings.ALLOWED_HOSTS,
-        'host_header': request.get_host(),
-        'email_user': settings.EMAIL_HOST_USER,
-        'email_pass_set': bool(settings.EMAIL_HOST_PASSWORD),
-        'email_pass_length': len(settings.EMAIL_HOST_PASSWORD or ''),
-        'installed_apps': settings.INSTALLED_APPS[-5:],
-    })
