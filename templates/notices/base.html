@@ -38,53 +38,138 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-  <!-- Navbar -->
+  <!-- ============================================== -->
+  <!-- NAVBAR                                          -->
+  <!-- ============================================== -->
   <nav class="bg-uou text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center gap-3">
+      <div class="flex justify-between items-center h-16 gap-3">
 
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 min-w-0">
+        <!-- Brand (left) -->
+        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 min-w-0 flex-shrink">
           <div class="w-10 h-10 bg-white text-uou rounded-full flex items-center justify-center font-bold shrink-0">
             UOU
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 hidden xs:block sm:block">
             <div class="font-bold text-sm sm:text-lg leading-tight truncate">Unique Open University</div>
             <div class="text-xs text-indigo-200">Notice Board</div>
           </div>
         </a>
 
-        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm hidden sm:inline">Home</a>
+        <!-- Desktop menu (right) — hidden on mobile -->
+        <div class="hidden md:flex items-center gap-4 shrink-0">
+          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">Home</a>
 
           {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm hidden sm:inline">
+            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">
               Admin Panel
             </a>
           {% endif %}
 
           {% if user.is_authenticated %}
-            <span class="text-sm text-indigo-200 hidden md:inline truncate max-w-[100px]">
+            <span class="text-sm text-indigo-200 truncate max-w-[120px]">
               Hi, {{ user.username }}
             </span>
             <form method="post" action="{% url 'account_logout' %}" class="inline">
               {% csrf_token %}
-              <button class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
+              <button class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
                 Logout
               </button>
             </form>
           {% else %}
             <a href="{% url 'account_login' %}"
-               class="bg-white text-uou px-3 py-1 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
+               class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
               Login
             </a>
           {% endif %}
         </div>
 
+        <!-- Mobile: quick logout + hamburger -->
+        <div class="flex md:hidden items-center gap-2 shrink-0">
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'account_logout' %}" class="inline">
+              {% csrf_token %}
+              <button class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
+                Logout
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'account_login' %}"
+               class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
+              Login
+            </a>
+          {% endif %}
+
+          <!-- Hamburger button -->
+          <button type="button" id="mobile-menu-toggle"
+                  aria-label="Open menu"
+                  class="p-1.5 rounded-lg hover:bg-uou-dark focus:outline-none">
+            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile dropdown menu -->
+    <div id="mobile-menu" class="md:hidden hidden bg-uou-dark border-t border-indigo-700">
+      <div class="px-4 py-3 space-y-1">
+
+        {% if user.is_authenticated %}
+          <div class="text-sm text-indigo-200 px-3 py-2 border-b border-indigo-700 mb-2">
+            Signed in as <strong class="text-white">{{ user.username }}</strong>
+          </div>
+        {% endif %}
+
+        <a href="{% url 'dashboard' %}"
+           class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+          🏠 Home
+        </a>
+
+        {% if user.is_authenticated and user.is_staff %}
+          <a href="{% url 'admin_dashboard' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+            ⚙️ Admin Panel
+          </a>
+          <a href="{% url 'manage_notices' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+            📋 Manage Notices
+          </a>
+          <a href="{% url 'category_list' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+            🏷️ Categories
+          </a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'account_logout' %}" class="pt-1">
+            {% csrf_token %}
+            <button type="submit"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
+              🚪 Logout
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'account_login' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
+            🔐 Login
+          </a>
+          <a href="{% url 'account_signup' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+            ✍️ Sign Up
+          </a>
+        {% endif %}
+
       </div>
     </div>
   </nav>
 
-  <!-- Flash messages (mt-4 moved to each message so no gap when empty) -->
+  <!-- Flash messages -->
   {% if messages %}
     <div class="max-w-7xl mx-auto px-4 w-full">
       {% for message in messages %}
@@ -108,6 +193,36 @@
   </footer>
 
   <script src="{% static 'js/main.js' %}"></script>
+
+  <!-- Mobile menu toggle script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('mobile-menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      const hamburger = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
+
+      if (!toggle || !menu) return;
+
+      toggle.addEventListener('click', () => {
+        const isOpen = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', isOpen);
+        hamburger.classList.toggle('hidden', !isOpen);
+        closeIcon.classList.toggle('hidden', isOpen);
+      });
+
+      // Close menu when clicking outside (optional)
+      document.addEventListener('click', (e) => {
+        if (!menu.classList.contains('hidden')
+            && !menu.contains(e.target)
+            && !toggle.contains(e.target)) {
+          menu.classList.add('hidden');
+          hamburger.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
