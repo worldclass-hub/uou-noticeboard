@@ -43,6 +43,9 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv()
 )
 
+# Trust X-Forwarded-Proto from Render's proxy (for HTTPS detection)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')   # ← ADD THIS
+
 
 # ============================================
 # APPLICATIONS
@@ -92,6 +95,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'notices.middleware.DynamicSiteDomainMiddleware',   # ← ADD THIS
+
 ]
 
 ROOT_URLCONF = 'config.urls'
