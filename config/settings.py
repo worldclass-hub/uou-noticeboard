@@ -28,15 +28,14 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 # ============================================
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-dev-only-change-me')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'uou-noticeboard.onrender.com']
+ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = config(
-    'CSRF_TRUSTED_ORIGINS',
-    default='http://127.0.0.1:8000',
-    cast=Csv()
-)
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'https://uou-noticeboard.onrender.com',
+]
 
 # ============================================
 # APPLICATIONS
@@ -182,8 +181,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_HOST_USER = 'samuelemenike4321@gmail.com'
+EMAIL_HOST_PASSWORD = 'gmutdjtyaebzlgsp'
 DEFAULT_FROM_EMAIL = 'UOU Notice Board <samuelemenike4321@gmail.com>'
 
 
