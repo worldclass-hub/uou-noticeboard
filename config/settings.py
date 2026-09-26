@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Optional — keep Jazzmin if you want it
-# from .jazzmin import JAZZMIN_SETTINGS
+from .jazzmin import JAZZMIN_SETTINGS
 
 
 # ============================================
@@ -185,7 +185,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ============================================
 # JAZZMIN (optional admin theme)
 # ============================================
-# JAZZMIN_SETTINGS = JAZZMIN_SETTINGS
+JAZZMIN_SETTINGS = JAZZMIN_SETTINGS
 
 
 # ============================================

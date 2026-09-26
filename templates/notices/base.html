@@ -3,8 +3,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>{% block title %}UOU Notice Board{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/UOU-LOGO-WHITE-BACKGROUND.png' %}">
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -25,10 +28,84 @@
   </script>
 
   <style>
-    /* Global safety: prevent any content from breaking the layout */
-    body {
-      overflow-x: hidden;
+    /* ===== ANTI-OVERSCROLL (iOS FIX) ===== */
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f9fafb;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      will-change: transform;
     }
+
+    .scroll-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: none;
+      background: #f9fafb;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: scroll-position;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      background: transparent !important;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+      .scroll-container {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+    /* ===== SCROLL BOUNDARY INDICATOR ===== */
+    .scroll-boundary {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #4f46e5, #818cf8, #a78bfa);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .scroll-boundary.visible {
+      opacity: 1;
+    }
+
+    /* ===== EXISTING STYLES ===== */
     .break-words {
       word-wrap: break-word;
       overflow-wrap: break-word;
@@ -36,191 +113,275 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body>
 
-  <!-- ============================================== -->
-  <!-- NAVBAR                                          -->
-  <!-- ============================================== -->
-  <nav class="bg-uou text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16 gap-3">
+  <!-- Scroll Boundary Indicator -->
+  <div id="scrollBoundary" class="scroll-boundary"></div>
 
-        <!-- Brand (left) -->
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-3 min-w-0 flex-shrink">
-          <div class="w-10 h-10 bg-white text-uou rounded-full flex items-center justify-center font-bold shrink-0">
-            UOU
+  <!-- Scroll Container (wraps everything) -->
+  <div class="scroll-container" id="scrollContainer">
+
+    <!-- SCHOOL BANNER (above navbar) -->
+    <div class="bg-gray-900 text-gray-200 border-b border-gray-800 hidden sm:block">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div class="flex items-center justify-between gap-4 text-xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-base">🎓</span>
+            <span class="font-semibold text-white truncate">
+              Unique Open University
+            </span>
+            <span class="text-gray-500 hidden md:inline">|</span>
+            <span class="text-gray-400 hidden md:inline truncate">
+              Department of Computer Science
+            </span>
           </div>
-          <div class="min-w-0 hidden xs:block sm:block">
-            <div class="font-bold text-sm sm:text-lg leading-tight truncate">Unique Open University</div>
-            <div class="text-xs text-indigo-200">Notice Board</div>
+          <div class="text-gray-400 whitespace-nowrap hidden md:block">
+            Official Notice Board
           </div>
-        </a>
+        </div>
+      </div>
+    </div>
 
-        <!-- Desktop menu (right) — hidden on mobile -->
-        <div class="hidden md:flex items-center gap-4 shrink-0">
-          <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">Home</a>
+    <!-- NAVBAR -->
+    <nav class="bg-uou text-white shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16 gap-3">
+
+          <!-- Brand (left) — with logo -->
+          <a href="{% url 'dashboard' %}" class="flex items-center gap-3 min-w-0 flex-shrink">
+            <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+              <img src="{% static 'img/UOU-LOGO-WHITE-BACKGROUND.png' %}"
+                   alt="UOU Logo"
+                   class="w-full h-full object-contain p-0.5">
+            </div>
+            <div class="min-w-0 hidden xs:block sm:block">
+              <div class="font-bold text-sm sm:text-lg leading-tight truncate">Unique Open University</div>
+              <div class="text-xs text-indigo-200">Notice Board</div>
+            </div>
+          </a>
+
+          <!-- Desktop menu -->
+          <div class="hidden md:flex items-center gap-4 shrink-0">
+            <a href="{% url 'dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">Home</a>
+
+            {% if user.is_authenticated and user.is_staff %}
+              <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">
+                Admin Panel
+              </a>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+              <span class="text-sm text-indigo-200 truncate max-w-[120px]">
+                Hi, {{ user.username }}
+              </span>
+              <form method="post" action="{% url 'account_logout' %}" class="inline">
+                {% csrf_token %}
+                <button class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
+                  Logout
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'account_login' %}"
+                 class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
+                Login
+              </a>
+            {% endif %}
+          </div>
+
+          <!-- Mobile: quick action + hamburger -->
+          <div class="flex md:hidden items-center gap-2 shrink-0">
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'account_logout' %}" class="inline">
+                {% csrf_token %}
+                <button class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
+                  Logout
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'account_login' %}"
+                 class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
+                Login
+              </a>
+            {% endif %}
+
+            <button type="button" id="mobile-menu-toggle"
+                    aria-label="Open menu"
+                    class="p-1.5 rounded-lg hover:bg-uou-dark focus:outline-none">
+              <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Mobile dropdown -->
+      <div id="mobile-menu" class="md:hidden hidden bg-uou-dark border-t border-indigo-700">
+        <div class="px-4 py-3 space-y-1">
+
+          {% if user.is_authenticated %}
+            <div class="text-sm text-indigo-200 px-3 py-2 border-b border-indigo-700 mb-2">
+              Signed in as <strong class="text-white">{{ user.username }}</strong>
+            </div>
+          {% endif %}
+
+          <a href="{% url 'dashboard' %}"
+             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+            🏠 Home
+          </a>
 
           {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'admin_dashboard' %}" class="hover:text-indigo-200 text-sm whitespace-nowrap">
-              Admin Panel
+            <a href="{% url 'admin_dashboard' %}"
+               class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+              ⚙️ Admin Panel
+            </a>
+            <a href="{% url 'manage_notices' %}"
+               class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+              📋 Manage Notices
+            </a>
+            <a href="{% url 'category_list' %}"
+               class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+              🏷️ Categories
             </a>
           {% endif %}
 
           {% if user.is_authenticated %}
-            <span class="text-sm text-indigo-200 truncate max-w-[120px]">
-              Hi, {{ user.username }}
-            </span>
-            <form method="post" action="{% url 'account_logout' %}" class="inline">
+            <form method="post" action="{% url 'account_logout' %}" class="pt-1">
               {% csrf_token %}
-              <button class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
-                Logout
+              <button type="submit"
+                      class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
+                🚪 Logout
               </button>
             </form>
           {% else %}
             <a href="{% url 'account_login' %}"
-               class="bg-white text-uou px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-100 whitespace-nowrap">
-              Login
+               class="block px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
+              🔐 Login
             </a>
-          {% endif %}
-        </div>
-
-        <!-- Mobile: quick logout + hamburger -->
-        <div class="flex md:hidden items-center gap-2 shrink-0">
-          {% if user.is_authenticated %}
-            <form method="post" action="{% url 'account_logout' %}" class="inline">
-              {% csrf_token %}
-              <button class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
-                Logout
-              </button>
-            </form>
-          {% else %}
-            <a href="{% url 'account_login' %}"
-               class="bg-white text-uou px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-100 whitespace-nowrap">
-              Login
+            <a href="{% url 'account_signup' %}"
+               class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
+              ✍️ Sign Up
             </a>
           {% endif %}
 
-          <!-- Hamburger button -->
-          <button type="button" id="mobile-menu-toggle"
-                  aria-label="Open menu"
-                  class="p-1.5 rounded-lg hover:bg-uou-dark focus:outline-none">
-            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
-
       </div>
-    </div>
+    </nav>
 
-    <!-- Mobile dropdown menu -->
-    <div id="mobile-menu" class="md:hidden hidden bg-uou-dark border-t border-indigo-700">
-      <div class="px-4 py-3 space-y-1">
-
-        {% if user.is_authenticated %}
-          <div class="text-sm text-indigo-200 px-3 py-2 border-b border-indigo-700 mb-2">
-            Signed in as <strong class="text-white">{{ user.username }}</strong>
+    {% if messages %}
+      <div class="max-w-7xl mx-auto px-4 w-full">
+        {% for message in messages %}
+          <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-3 rounded mt-4 mb-2 break-words">
+            {{ message }}
           </div>
-        {% endif %}
-
-        <a href="{% url 'dashboard' %}"
-           class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
-          🏠 Home
-        </a>
-
-        {% if user.is_authenticated and user.is_staff %}
-          <a href="{% url 'admin_dashboard' %}"
-             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
-            ⚙️ Admin Panel
-          </a>
-          <a href="{% url 'manage_notices' %}"
-             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
-            📋 Manage Notices
-          </a>
-          <a href="{% url 'category_list' %}"
-             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
-            🏷️ Categories
-          </a>
-        {% endif %}
-
-        {% if user.is_authenticated %}
-          <form method="post" action="{% url 'account_logout' %}" class="pt-1">
-            {% csrf_token %}
-            <button type="submit"
-                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
-              🚪 Logout
-            </button>
-          </form>
-        {% else %}
-          <a href="{% url 'account_login' %}"
-             class="block px-3 py-2.5 rounded-lg text-sm font-medium bg-white text-uou hover:bg-indigo-100">
-            🔐 Login
-          </a>
-          <a href="{% url 'account_signup' %}"
-             class="block px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-uou text-white">
-            ✍️ Sign Up
-          </a>
-        {% endif %}
-
+        {% endfor %}
       </div>
-    </div>
-  </nav>
+    {% endif %}
 
-  <!-- Flash messages -->
-  {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 w-full">
-      {% for message in messages %}
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-3 rounded mt-4 mb-2 break-words">
-          {{ message }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+    <main class="w-full overflow-x-hidden">
+      {% block content %}{% endblock %}
+    </main>
 
-  <!-- Main content -->
-  <main class="flex-1 w-full overflow-x-hidden">
-    {% block content %}{% endblock %}
-  </main>
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-12">
+      <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+        © {% now "Y" %} Unique Open University — Departmental Notice Board
+      </div>
+    </footer>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-gray-300 py-6 mt-12">
-    <div class="max-w-7xl mx-auto px-4 text-center text-sm">
-      © {% now "Y" %} Unique Open University — Departmental Notice Board
-    </div>
-  </footer>
+  </div>
+  <!-- End Scroll Container -->
 
   <script src="{% static 'js/main.js' %}"></script>
 
-  <!-- Mobile menu toggle script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // ============================================================
+      // MOBILE MENU TOGGLE
+      // ============================================================
       const toggle = document.getElementById('mobile-menu-toggle');
       const menu = document.getElementById('mobile-menu');
       const hamburger = document.getElementById('hamburger-icon');
       const closeIcon = document.getElementById('close-icon');
 
-      if (!toggle || !menu) return;
+      if (toggle && menu) {
+        toggle.addEventListener('click', () => {
+          const isOpen = !menu.classList.contains('hidden');
+          menu.classList.toggle('hidden', isOpen);
+          hamburger.classList.toggle('hidden', !isOpen);
+          closeIcon.classList.toggle('hidden', isOpen);
+        });
 
-      toggle.addEventListener('click', () => {
-        const isOpen = !menu.classList.contains('hidden');
-        menu.classList.toggle('hidden', isOpen);
-        hamburger.classList.toggle('hidden', !isOpen);
-        closeIcon.classList.toggle('hidden', isOpen);
-      });
+        document.addEventListener('click', (e) => {
+          if (!menu.classList.contains('hidden')
+              && !menu.contains(e.target)
+              && !toggle.contains(e.target)) {
+            menu.classList.add('hidden');
+            hamburger.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+          }
+        });
+      }
 
-      // Close menu when clicking outside (optional)
-      document.addEventListener('click', (e) => {
-        if (!menu.classList.contains('hidden')
-            && !menu.contains(e.target)
-            && !toggle.contains(e.target)) {
-          menu.classList.add('hidden');
-          hamburger.classList.remove('hidden');
-          closeIcon.classList.add('hidden');
+      // ============================================================
+      // iOS OVERSCROLL MANAGEMENT
+      // ============================================================
+      function setupScrollManagement() {
+        const scrollContainer = document.getElementById('scrollContainer');
+
+        if ('ontouchstart' in window) {
+          scrollContainer.style.WebkitOverflowScrolling = 'touch';
+          let touchStartY = 0;
+
+          document.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+          }, { passive: true });
+
+          document.addEventListener('touchmove', function(e) {
+            const container = document.getElementById('scrollContainer');
+            if (!container) return;
+
+            const touchY = e.touches[0].clientY;
+            const direction = touchY - touchStartY;
+            const scrollTop = container.scrollTop;
+            const scrollHeight = container.scrollHeight;
+            const clientHeight = container.clientHeight;
+
+            // At top and trying to scroll up (pulling down)
+            if (scrollTop <= 0 && direction > 0) {
+              e.preventDefault();
+              container.scrollTop = 0;
+              return;
+            }
+
+            // At bottom and trying to scroll down (pushing up)
+            if (scrollTop + clientHeight >= scrollHeight - 1 && direction < 0) {
+              e.preventDefault();
+              container.scrollTop = scrollHeight - clientHeight;
+              return;
+            }
+
+            touchStartY = touchY;
+          }, { passive: false });
         }
-      });
+
+        // Scroll boundary indicator
+        scrollContainer.addEventListener('scroll', function() {
+          const distanceFromBottom = this.scrollHeight - (this.scrollTop + this.clientHeight);
+          const boundary = document.getElementById('scrollBoundary');
+
+          if (distanceFromBottom <= 50 && distanceFromBottom > 0) {
+            boundary.classList.add('visible');
+          } else {
+            boundary.classList.remove('visible');
+          }
+        });
+      }
+
+      setupScrollManagement();
     });
   </script>
 

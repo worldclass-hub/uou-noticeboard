@@ -14,9 +14,9 @@ JAZZMIN_SETTINGS = {
     # 2. LOGO CONFIGURATION
     # =========================================================
     
-    "site_logo": "img/PlentyHelp-Icon-Light.png",
+    "site_logo": "img/UOU-LOGO-WHITE-BACKGROUND.png",
     "site_logo_classes": "brand-image",
-    # "login_logo": "img/PlentyHelp-Icon-Light.png",
+    # "login_logo": "img/UOU-LOGO-WHITE-BACKGROUND.png",
     # "login_logo_classes": "login-logo-img",
     
     
